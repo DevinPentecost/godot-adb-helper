@@ -20,9 +20,16 @@ const devices_property_info = {
 			"hint_string": "{'device_name': 'ip'}",
 		}
 
+#Validation
+const ip_regex = "^[012]?\\d?\\d\\.[012]?\\d?\\d\\.[012]?\\d?\\d\\.[012]?\\d?\\d$"
+onready var regex = RegEx.new()
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	
+	#Compile regex
+	regex.compile(ip_regex)
+
 	#Do we have the adb?
 	if not adb_setting:
 		#We have a problem
@@ -86,11 +93,17 @@ func _add_device(device_name, device_ip):
 
 func _on_device_connect_pressed(device_name, device_ip):
 	
-	
 	#Attempt to make the connection
 	var full_ip = device_ip + ":" + port_setting
 	print("Attempting to connect to ", device_name, " ", full_ip)
 	
+	#Validate the input
+	if not regex.search(device_ip):
+		#Fake!
+		print("Invalid IP!")
+		return
+
+	#TODO: Error handling!!
 	OS.execute(adb_setting, ['tcpip', port_setting], true)
 	OS.execute(adb_setting, ['connect', full_ip], true)
 
@@ -114,7 +127,10 @@ func _on_AddButton_pressed():
 	var device_ip = $WindowDialog/DialogContainer/AddDeviceContainer/IPTextEdit.text
 	
 	#Validate the input
-	#TODO
+	if not regex.search(device_ip):
+		#Fake!
+		print("Invalid IP!")
+		return
 	
 	#Get the current devices
 	var devices = settings.get_setting(devices_setting)
