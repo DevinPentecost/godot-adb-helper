@@ -4,9 +4,13 @@ extends Button
 onready var _window_dialog = $WindowDialog
 var settings : EditorSettings
 
+#ADB command values
 const adb_setting = "export/android/adb"
 onready var adb_command = settings.get(adb_setting)
+const port_setting = "5555"
+onready var adb_port = settings
 
+#Settings values
 const settings_category = "ADBHelper"
 const devices_setting = settings_category + "/devices"
 const devices_property_info = {
@@ -24,6 +28,9 @@ func _ready():
 		#We have a problem
 		print("No ADB found under ", adb_setting)
 		print("Please set it up in the Editor Settings!")
+	
+	#Show the port
+	$WindowDialog/DialogContainer/ExtraContainer/PortLabel.text = "Port: " + port_setting + " (added to IP)"
 	
 	#Make sure we have devices
 	if not settings.has_setting(devices_setting):
@@ -67,18 +74,38 @@ func _add_device(device_name, device_ip):
 	device_button.connect("pressed", self, "_on_device_connect_pressed", [device_name, device_ip])
 	device_container.add_child(device_button)
 	
+	#Delete button
+	var delete_button = Button.new()
+	delete_button.text = "X"
+	delete_button.connect("pressed", self, "_on_delete_button_pressed", [device_container])
+	device_container.add_child(delete_button)
+	
 	#Add it to the dialog
 	$WindowDialog/DialogContainer/DeviceContainer.add_child(device_container)
 	
-	#Also add it to the settings
-	
+
 func _on_device_connect_pressed(device_name, device_ip):
 	
-	#Attempt to make the connection
 	
-	print("CONNECT", device_name, device_ip)
-	print("adb: ", settings.get_setting(adb_setting))
+	#Attempt to make the connection
+	var full_ip = device_ip + ":" + port_setting
+	print("Attempting to connect to ", device_name, " ", full_ip)
+	
+	OS.execute(adb_setting, ['tcpip', port_setting], true)
+	OS.execute(adb_setting, ['connect', full_ip], true)
 
+func _on_delete_button_pressed(container):
+	
+	#Get the device name
+	var device_name = container.get_child(0).text
+	
+	#Kill it
+	var devices = settings.get_setting(devices_setting)
+	devices.erase(device_name)
+	settings.set_setting(devices_setting, devices)
+	
+	container.queue_free()
+	
 
 func _on_AddButton_pressed():
 	
@@ -89,13 +116,15 @@ func _on_AddButton_pressed():
 	#Validate the input
 	#TODO
 	
-	#Add it to the settings
-	var device_property = {
-		"name": device_name,
-		"ip": device_ip
-	}
-	
 	#Get the current devices
 	var devices = settings.get_setting(devices_setting)
-	devices.append(device_property)
+	devices[device_name] = device_ip
 	settings.set_setting(devices_setting, devices)
+	
+	#Show new device
+	_add_device(device_name, device_ip)
+
+func _on_HelpButton_pressed():
+	
+	#Bring up the page
+	OS.shell_open("https://github.com/DevinPentecost/godot-adb-helper/blob/master/addons/adb_helper/README.md")

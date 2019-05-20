@@ -28,6 +28,7 @@ margin_right = -5.0
 margin_bottom = -5.0
 
 [node name="DeviceContainer" type="VBoxContainer" parent="WindowDialog/DialogContainer"]
+editor/display_folded = true
 margin_right = 256.0
 margin_bottom = 123.0
 size_flags_vertical = 3
@@ -63,6 +64,7 @@ margin_right = 256.0
 margin_bottom = 131.0
 
 [node name="AddDeviceContainer" type="HBoxContainer" parent="WindowDialog/DialogContainer"]
+editor/display_folded = true
 margin_top = 135.0
 margin_right = 256.0
 margin_bottom = 155.0
@@ -87,12 +89,27 @@ margin_right = 255.0
 margin_bottom = 20.0
 text = "Add..."
 
-[node name="Settingsbutton" type="Button" parent="WindowDialog/DialogContainer"]
+[node name="ExtraContainer" type="HBoxContainer" parent="WindowDialog/DialogContainer"]
 margin_top = 159.0
-margin_right = 129.0
+margin_right = 256.0
 margin_bottom = 179.0
+
+[node name="HelpButton" type="Button" parent="WindowDialog/DialogContainer/ExtraContainer"]
+margin_right = 46.0
+margin_bottom = 20.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-text = "Android Settings..."
+text = "Help!"
+
+[node name="PortLabel" type="Label" parent="WindowDialog/DialogContainer/ExtraContainer"]
+margin_left = 50.0
+margin_top = 3.0
+margin_right = 256.0
+margin_bottom = 17.0
+grow_horizontal = 0
+size_flags_horizontal = 3
+text = "Port: 5555 (added to IP)"
+align = 2
 [connection signal="pressed" from="." to="." method="_on_adb_helper_pressed"]
 [connection signal="pressed" from="WindowDialog/DialogContainer/AddDeviceContainer/AddButton" to="." method="_on_AddButton_pressed"]
+[connection signal="pressed" from="WindowDialog/DialogContainer/ExtraContainer/HelpButton" to="." method="_on_HelpButton_pressed"]
