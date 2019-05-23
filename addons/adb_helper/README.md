@@ -18,6 +18,7 @@ TODO: Move the information into this readme!
 
 ### Initial Usage
 If this is the first time you've set this up you'll need to follow these steps.
+1. Set up your [Android Export](https://docs.godotengine.org/en/latest/getting_started/workflow/export/exporting_for_android.html) if you haven't already
 1. Connect the device via USB
 1. Get the device's IP address
 1. Use the Plugin
@@ -27,5 +28,7 @@ If this is the first time you've set this up you'll need to follow these steps.
 
 ### Reconnecting
 Once your device is setup, you can now connect to it at any time. If you ever lose connection, you can simply hit the plugin again and have it reconnect.
+
 ***HOWEVER!***
+
 If your device reboots, it will lose the wireless connection. You'll need to re-establish the connection by plugging the device back into the machine via USB and connecting. Once the wireless connection has been established, you can disconnect the device and utilize ADB wirelessly again!
